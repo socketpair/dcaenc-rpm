@@ -1,0 +1,99 @@
+diff --git a/alsaplugin.c b/alsaplugin.c
+index f30e880..749026d 100644
+--- a/alsaplugin.c
++++ b/alsaplugin.c
+@@ -53,8 +53,9 @@ static inline int32_t get_s32(const snd_pcm_channel_area_t *area,
+         case SND_PCM_FORMAT_S16:
+                 sample16 = (int16_t*)area_addr(area, offset);
+                 return *sample16 * 0x10000;
++        default:
++                return 0;
+         }
+-        return 0;
+ }
+ 
+ static inline void put_s16(const snd_pcm_channel_area_t *area,
+@@ -78,7 +79,6 @@ static snd_pcm_sframes_t dcaplug_transfer(snd_pcm_extplug_t *ext,
+                 size = remaining;
+ 
+         snd_pcm_uframes_t i;
+-        int channel;
+         int srcbufidx = ext->channels * dcaplug->bufpos;
+         int dstbufidx = 2 * dcaplug->bufpos;
+         for (i = 0; i < size; i++) {
+@@ -231,8 +231,8 @@ SND_PCM_PLUGIN_DEFINE_FUNC(dca)
+                 return err;
+         }
+ 
+-        static const int channels[2] = {4, 6};
+-        static const int formats[2] = {SND_PCM_FORMAT_S32, SND_PCM_FORMAT_S16};
++        static const unsigned int channels[2] = {4, 6};
++        static const unsigned int formats[2] = {SND_PCM_FORMAT_S32, SND_PCM_FORMAT_S16};
+ 
+         snd_pcm_extplug_set_param_list(&dcaplug->ext, SND_PCM_EXTPLUG_HW_CHANNELS,
+                 2, channels);
+diff --git a/dcaenc.c b/dcaenc.c
+index 71a0dd4..7587784 100644
+--- a/dcaenc.c
++++ b/dcaenc.c
+@@ -393,6 +393,7 @@ static void walk_band_high(dcaenc_context c, int band, int channel,
+ 	}
+ }
+ 
++#if 0
+ static void walk_whole_spectrum(dcaenc_context c, int channel,
+                                 walk_band_t walk, int32_t * arg)
+ {
+@@ -401,6 +402,7 @@ static void walk_whole_spectrum(dcaenc_context c, int channel,
+ 		walk_band_low(c, band, channel, walk, arg);
+ 	walk_band_high(c, 31, channel, walk, arg);
+ }
++#endif
+ 
+ static void update_band_masking(dcaenc_context c, int band1, int band2,
+ 							int f, int32_t spectrum1, int32_t spectrum2,
+@@ -526,7 +528,7 @@ static void dcaenc_assign_bits(dcaenc_context c)
+ 	low = high = c->worst_quantization_noise;
+ 	if (c->consumed_bits > c->frame_bits) {
+ 		while (c->consumed_bits > c->frame_bits) {
+-			assert(("Too low bitrate should have been rejected in dcaenc_create", used_abits != USED_1ABITS));
++			assert(((void)"Too low bitrate should have been rejected in dcaenc_create", used_abits != USED_1ABITS));
+ 			low = high;
+ 			high += snr_fudge;
+ 			used_abits = init_quantization_noise(c, high);
+@@ -911,6 +913,7 @@ static void put_subframe(dcaenc_context c)
+ 	bitstream_put(c, 0xffff, 16);
+ }
+ 
++#if 0
+ static void dump_bits(dcaenc_context c)
+ {
+ 	int band, ch;
+@@ -937,6 +940,7 @@ static void dump_masking_curve(dcaenc_context c)
+ 		printf(" %d", c->eff_masking_curve_cb[f]);
+ 	printf("\n");
+ }
++#endif
+ 
+ static int dcaenc_convert_frame(dcaenc_context c, const int32_t *input, uint8_t *output, int normal)
+ {
+diff --git a/main.c b/main.c
+index 00e8fa6..cff69f8 100644
+--- a/main.c
++++ b/main.c
+@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
+ 	FILE * outfile;
+ 	int bitrate;
+ 	int wrote;
+-	int samples_total;
+ 	
+ 	static const int channel_map[6] = {DCAENC_CHANNELS_MONO, DCAENC_CHANNELS_STEREO, 0,
+ 	DCAENC_CHANNELS_2FRONT_2REAR, DCAENC_CHANNELS_3FRONT_2REAR, DCAENC_CHANNELS_3FRONT_2REAR };
+@@ -60,7 +59,6 @@ int main(int argc, char *argv[])
+ 	}
+ 	bitrate = atoi(argv[3]);
+ 	
+-	samples_total = f->samples_left;
+ 	c = dcaenc_create(f->sample_rate, channel_map[f->channels - 1], bitrate, f->channels == 6 ? DCAENC_FLAG_LFE : 0);
+ 	
+ 	if (!c) {
