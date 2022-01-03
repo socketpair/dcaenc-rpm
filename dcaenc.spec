@@ -88,9 +88,13 @@ ln -s %{_datadir}/alsa/alsa.conf.d/60-%{name}.conf %{buildroot}%{_sysconfdir}/al
 %{_libdir}/alsa-lib/*.so
 %{_datadir}/alsa/pcm/*
 %{_datadir}/alsa/alsa.conf.d/*
-%config %{_sysconfdir}/alsa/conf.d/*
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/*
 %doc README
 %doc TODO
 %doc BUGS
 %doc AUTHORS
 %doc HOWTO.TXT
+
+%changelog
+* Tue Jan 04 2022 Коренберг Марк <socketpair@gmail.com> 3-1
+- Initial RPM release
