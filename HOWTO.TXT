@@ -1,11 +1,12 @@
-In order to have 5.1 sound, basically there are only
-two options:
+In order to have 5.1 sound, basically there are only two options:
+
 1. Pass-through DTS or AC3. If you have sound already encoded by one
    of these codecs i.e. on DVD/Blu-ray, AND your sound stack supports
    pass-through mode.  Note: it's impossible to mix sounds in this case,
    and PipeWire does not support pass-through at the moment. YouTube does
    not give you 5.1 sound by deault. Also browsers tends to decode DTS
    or AC3 sound instead of passing-through even if it could be possible.
+
 2. Decode anything to 6-channel PCM (if encoded) and pass it (possibly
    through PipeWire or PulseAudio) over HDMI. It SHOULD work. If it
    doesn't -- pass 6-channel sound to this plugin for re-encoding to

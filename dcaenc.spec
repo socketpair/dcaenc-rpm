@@ -1,7 +1,7 @@
 Name: dcaenc
 Summary: Dcaenc DTS 5.1 encoder
 Version: 3
-Release: 1%{?icsgit}%{?dist}
+Release: 1%{?dist}
 License: LGPLv2
 URL: https://gitlab.com/patrakov/dcaenc
 
@@ -13,12 +13,12 @@ BuildRequires: libtool
 BuildRequires: make
 BuildRequires: pkgconf
 
-Source0: https://gitlab.com/patrakov/dcaenc/-/archive/v%{version}/%{name}-v%{version}.tar.gz
+Source0: %{url}/-/archive/v%{version}/%{name}-v%{version}.tar.gz
 Source1: HOWTO.TXT
 Patch0: warnings.patch
 
 %description
-Dcaenc DTS 5.1 encoder.
+%{summary}.
 
 %package utils
 Summary: Dcaenc DTS 5.1 encoder command-line tool
@@ -82,18 +82,20 @@ ln -s %{_datadir}/alsa/alsa.conf.d/60-%{name}.conf %{buildroot}%{_sysconfdir}/al
 %{_libdir}/*.so
 
 %files -n libdcaenc
-%{_libdir}/*.so.*
+%{_libdir}/libdcaenc.so.0.0.0
+%{_libdir}/libdcaenc.so.0
+%license COPYING
 
 %files -n alsa-plugins-%{name}
 %{_libdir}/alsa-lib/*.so
 %{_datadir}/alsa/pcm/*
 %{_datadir}/alsa/alsa.conf.d/*
 %config(noreplace) %{_sysconfdir}/alsa/conf.d/*
+%doc AUTHORS
+%doc BUGS
+%doc HOWTO.TXT
 %doc README
 %doc TODO
-%doc BUGS
-%doc AUTHORS
-%doc HOWTO.TXT
 
 %changelog
 * Tue Jan 04 2022 Коренберг Марк <socketpair@gmail.com> 3-1
